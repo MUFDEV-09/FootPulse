@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PITCHPULSE | Interactive Football Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070b0e;
+      --surface: #0f161c;
+      --surface-2: #162029;
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f3f6f8;
+      --muted: #94a3b8;
+      --accent: #10b981;
+      --accent-dark: #059669;
+      --accent-glow: rgba(16, 185, 129, 0.28);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .display {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      line-height: 1.1;
+    }
+
+    /* Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 11, 14, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: var(--text);
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .brand span { color: var(--accent); transition: color 0.3s; }
+    .nav-links {
+      display: flex;
+      gap: 1.4rem;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .kit-picker {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .swatch:hover, .swatch.active {
+      transform: scale(1.18);
+      border-color: #fff;
+    }
+    .sound-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .sound-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      padding: 5.5rem 1.25rem 4.5rem;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, var(--accent-glow), transparent 62%),
+        linear-gradient(180deg, #0b1319 0%, var(--bg) 100%);
+      overflow: hidden;
+    }
+    .pitch-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.14;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.1rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.7rem, 6vw, 4.8rem);
+      margin-bottom: 1rem;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+      transition: color 0.3s;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 610px;
+      margin: 0 auto 2rem;
+    }
+    .hero-cta {
+      display: flex;
+      justify-content: center;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s, background 0.25s, box-shadow 0.25s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #04110b;
+      box-shadow: 0 8px 25px var(--accent-glow);
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Ticker */
+    .ticker-wrap {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 0.65rem 0;
+    }
+    .ticker {
+      display: inline-block;
+      animation: marquee 28s linear infinite;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .ticker span { margin: 0 1.75rem; }
+    .ticker strong { color: var(--accent); }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Sections */
+    section.block {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4.5rem 1.25rem;
+    }
+    .sec-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .sec-head h2 { font-size: clamp(1.9rem, 3.5vw, 2.7rem); }
+    .sec-head p { color: var(--muted); max-width: 540px; }
+
+    /* Tactical Board */
+    .tactics-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .pitch-card, .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      justify-content: space-between;
+    }
+    .pill-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .pill {
+      background: var(--surface-2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pill.active, .pill:hover {
+      background: var(--accent);
+      color: #04110b;
+      border-color: var(--accent);
+    }
+    .pitch {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      max-height: 540px;
+      background: repeating-linear-gradient(
+        0deg,
+        #0d3b26 0px,
+        #0d3b26 44px,
+        #10462d 44px,
+        #10462d 88px
+      );
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .pitch-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .player-node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      transition: left 0.45s cubic-bezier(0.22, 1, 0.36, 1), top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      z-index: 3;
+    }
+    .jersey {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #04110b;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: grid;
+      place-items: center;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s, background 0.3s;
+    }
+    .player-node:hover .jersey, .player-node.selected .jersey {
+      transform: scale(1.16);
+      background: #fff;
+    }
+    .player-tag {
+      margin-top: 4px;
+      background: rgba(7, 11, 14, 0.86);
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .editor-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem;
+      margin-bottom: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 76px auto;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .editor-box input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 0.65rem;
+      border-radius: 7px;
+      font-size: 0.85rem;
+    }
+    .roster-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem;
+      max-height: 310px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+    .roster-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.65rem;
+      background: var(--surface-2);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .roster-item.selected, .roster-item:hover { border-color: var(--accent); }
+    .roster-num {
+      color: var(--accent);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      min-width: 22px;
+    }
+
+    /* Penalty Shootout */
+    .shootout-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .scoreboard {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .dots { display: flex; gap: 0.5rem; }
+    .dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .dot.goal { background: #10b981; color: #04110b; border-color: #10b981; }
+    .dot.miss { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+    .goal-arena {
+      position: relative;
+      height: 310px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #0a141d 0%, #102433 58%, #0e3e27 58%, #0a2d1c 100%);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .goal-frame {
+      position: relative;
+      margin-top: 36px;
+      width: min(460px, 88%);
+      height: 155px;
+      border: 6px solid #f8fafc;
+      border-bottom: none;
+      background: repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 8px, transparent 8px 16px);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+    .target-zone {
+      border: 1px dashed rgba(255, 255, 255, 0.22);
+      background: transparent;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .target-zone:hover { background: rgba(16, 185, 129, 0.25); color: #fff; }
+    .keeper {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 64px;
+      background: #f59e0b;
+      border: 2px solid #fff;
+      border-radius: 10px 10px 4px 4px;
+      display: grid;
+      place-items: center;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      color: #111;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+    .ball {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff, #cbd5e1);
+      border: 2px solid #0f172a;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+      transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .callout {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.05em;
+      text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+    }
+
+    /* Trivia & Culture */
+    .split-2 {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 1.5rem;
+    }
+    .quiz-opt {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.55rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .quiz-opt:hover { border-color: var(--accent); }
+    .quiz-opt.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; }
+    .quiz-opt.wrong { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .info-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    .info-card small {
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+    }
+    .info-card h3 { font-size: 1.15rem; margin: 0.35rem 0; }
+    .info-card p { font-size: 0.86rem; color: var(--muted); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.25rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 860px) {
+      .tactics-grid, .split-2 { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-wrap">
+      <a href="#top" class="brand">
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+          <path d="M18 2L32 8V18C32 26.5 25.8 32.5 18 35C10.2 32.5 4 26.5 4 18V8L18 2Z" fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2.4"/>
+          <circle cx="18" cy="18" r="6" stroke="#fff" stroke-width="2"/>
+        </svg>
+        PITCH<span>PULSE</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#tactics">Tactical Board</a>
+        <a href="#shootout">Penalty Shootout</a>
+        <a href="#trivia">Trivia & Tactics</a>
+      </nav>
+
+      <div class="controls">
+        <div class="kit-picker" title="Switch Club Kit Accent">
+          <span>Kit:</span>
+          <button class="swatch active" style="background:#10b981" onclick="setKit('#10b981','#059669','rgba(16,185,129,0.28)',this)" aria-label="Pitch Green"></button>
+          <button class="swatch" style="background:#f59e0b" onclick="setKit('#f59e0b','#d97706','rgba(245,158,11,0.28)',this)" aria-label="Madrid Gold"></button>
+          <button class="swatch" style="background:#f43f5e" onclick="setKit('#f43f5e','#e11d48','rgba(244,63,94,0.28)',this)" aria-label="Blaugrana Crimson"></button>
+          <button class="swatch" style="background:#38bdf8" onclick="setKit('#38bdf8','#0284c7','rgba(56,189,248,0.28)',this)" aria-label="Electric Blue"></button>
+        </div>
+        <button class="sound-btn" id="soundToggle" onclick="toggleSound()">🔇 SFX Off</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <svg class="pitch-bg" viewBox="0 0 1200 600" preserveAspectRatio="none">
+      <rect x="60" y="40" width="1080" height="520" fill="none" stroke="#fff" stroke-width="3"/>
+      <line x1="600" y1="40" x2="600" y2="560" stroke="#fff" stroke-width="3"/>
+      <circle cx="600" cy="300" r="95" fill="none" stroke="#fff" stroke-width="3"/>
+    </svg>
+    <div class="hero-inner">
+      <div class="badge">Matchday Interactive Hub</div>
+      <h1>Where Tactics, Legends & <em>Glory</em> Collide.</h1>
+      <p>Build your custom Dream XI on an interactive tactical pitch, step up to the spot in a 5-round penalty shootout, and test your football IQ.</p>
+      <div class="hero-cta">
+        <a href="#tactics" class="btn btn-primary">Build Your Dream XI →</a>
+        <a href="#shootout" class="btn btn-ghost">Play Penalty Shootout</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span><strong>4-3-3 GEGENPRESS</strong> High defensive line & 6-second counter-pressing</span>
+      <span><strong>WORLD CUP RECORD</strong> 172 goals scored in the 1998 & 2014 editions</span>
+      <span><strong>PENALTY PHYSICS</strong> Top-corner shots travel over 110 km/h in 0.4s</span>
+      <span><strong>TOTAL FOOTBALL</strong> Positional fluidity pioneered in 1970s Amsterdam</span>
+      <span><strong>4-3-3 GEGENPRESS</strong> High defensive line & 6-second counter-pressing</span>
+      <span><strong>WORLD CUP RECORD</strong> 172 goals scored in the 1998 & 2014 editions</span>
+      <span><strong>PENALTY PHYSICS</strong> Top-corner shots travel over 110 km/h in 0.4s</span>
+      <span><strong>TOTAL FOOTBALL</strong> Positional fluidity pioneered in 1970s Amsterdam</span>
+    </div>
+  </div>
+
+  <!-- Tactical Board -->
+  <section class="block" id="tactics">
+    <div class="sec-head">
+      <div>
+        <h2>Dream XI Tactical Board</h2>
+        <p>Switch formations, click any player on the pitch to edit their name or shirt number, or cycle All-Time Legends presets.</p>
+      </div>
+      <div class="pill-group">
+        <button class="pill active" onclick="setFormation('433', this)">4-3-3 Attack</button>
+        <button class="pill" onclick="setFormation('4231', this)">4-2-3-1 Control</button>
+        <button class="pill" onclick="setFormation('352', this)">3-5-2 Wingbacks</button>
+      </div>
+    </div>
+
+    <div class="tactics-grid">
+      <div class="pitch-card">
+        <div class="pitch" id="pitch">
+          <svg class="pitch-lines" viewBox="0 0 400 500" preserveAspectRatio="none">
+            <line x1="0" y1="250" x2="400" y2="250" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+            <circle cx="200" cy="250" r="48" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+            <rect x="95" y="0" width="210" height="72" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+            <rect x="95" y="428" width="210" height="72" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="toolbar">
+          <button class="pill" onclick="cyclePreset()">★ Cycle Legends XI</button>
+          <button class="pill" id="copyBtn" onclick="copyLineup()">📋 Copy Lineup</button>
+        </div>
+
+        <div class="editor-box">
+          <input type="text" id="editName" placeholder="Player Name" oninput="updateSelectedPlayer()" />
+          <input type="number" id="editNum" min="1" max="99" placeholder="#" oninput="updateSelectedPlayer()" />
+          <span style="font-size:0.75rem;color:var(--muted)" id="editPos">GK</span>
+        </div>
+
+        <div class="roster-list" id="rosterList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Penalty Shootout -->
+  <section class="block" id="shootout">
+    <div class="sec-head">
+      <div>
+        <h2>5-Round Penalty Shootout</h2>
+        <p>Pick a target zone inside the goal frame to beat the keeper across five sudden-pressure kicks.</p>
+      </div>
+      <button class="pill" onclick="resetShootout()">↻ Reset Shootout</button>
+    </div>
+
+    <div class="shootout-wrap">
+      <div class="scoreboard">
+        <div>
+          <strong style="font-size:1.1rem">Score: <span id="penScore" style="color:var(--accent)">0</span> / 5</strong>
+          <span style="color:var(--muted);font-size:0.85rem;margin-left:0.75rem" id="penStatus">Click any zone in the goal to shoot!</span>
+        </div>
+        <div class="dots" id="penDots">
+          <div class="dot">1</div>
+          <div class="dot">2</div>
+          <div class="dot">3</div>
+          <div class="dot">4</div>
+          <div class="dot">5</div>
+        </div>
+      </div>
+
+      <div class="goal-arena">
+        <div class="callout" id="penCallout"></div>
+        <div class="goal-frame" id="goalFrame">
+          <button class="target-zone" onclick="takePenalty(0)">Top Left</button>
+          <button class="target-zone" onclick="takePenalty(1)">Top Center</button>
+          <button class="target-zone" onclick="takePenalty(2)">Top Right</button>
+          <button class="target-zone" onclick="takePenalty(3)">Low Left</button>
+          <button class="target-zone" onclick="takePenalty(4)">Low Center</button>
+          <button class="target-zone" onclick="takePenalty(5)">Low Right</button>
+          <div class="keeper" id="keeper">GK</div>
+        </div>
+        <div class="ball" id="ball"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trivia & Culture -->
+  <section class="block" id="trivia">
+    <div class="split-2">
+      <div class="panel-card">
+        <span class="badge" style="margin-bottom:0.6rem">Football IQ Arena</span>
+        <h2 style="font-size:1.8rem;margin-bottom:0.75rem" id="qTitle">Question 1 of 5</h2>
+        <p style="margin-bottom:1rem;font-weight:600" id="qText"></p>
+        <div id="qOptions"></div>
+        <p id="qFeedback" style="font-size:0.86rem;color:var(--muted);margin-top:0.65rem"></p>
+        <button class="btn btn-primary" id="nextQBtn" style="margin-top:0.85rem;display:none" onclick="nextQuestion()">Next Question →</button>
+      </div>
+
+      <div class="panel-card">
+        <div class="sec-head" style="margin-bottom:0.75rem">
+          <h2 style="font-size:1.8rem">Tactical & Culture Vault</h2>
+          <div class="pill-group">
+            <button class="pill active" onclick="filterCards('all', this)">All</button>
+            <button class="pill" onclick="filterCards('tactics', this)">Tactics</button>
+            <button class="pill" onclick="filterCards('tournaments', this)">Tournaments</button>
+            <button class="pill" onclick="filterCards('skills', this)">Skills</button>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="cardsGrid">
+          <div class="info-card" data-cat="tactics">
+            <small>Tactics</small>
+            <h3>Inverted Fullbacks</h3>
+            <p>Fullbacks step into central midfield during possession to create a 3-2 buildup box and stop counter-attacks early.</p>
+          </div>
+          <div class="info-card" data-cat="tournaments">
+            <small>Tournaments</small>
+            <h3>The Panenka Legacy</h3>
+            <p>First executed by Antonín Panenka in the Euro 1976 final shootout—a delicate chip straight down the center.</p>
+          </div>
+          <div class="info-card" data-cat="skills">
+            <small>Skills</small>
+            <h3>La Croqueta</h3>
+            <p>Rapidly shifting the ball from one foot to the other to glide past a lunging defender in tight half-spaces.</p>
+          </div>
+          <div class="info-card" data-cat="tactics">
+            <small>Tactics</small>
+            <h3>False Nine</h3>
+            <p>A center-forward drops deep between midfield and defense, dragging center-backs out of position for wingers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    PITCHPULSE Interactive Football Hub — Built as a standalone HTML file.
+  </footer>
+
+  <script>
+    /* Sound Effects (Web Audio API) */
+    let soundOn = false;
+    let audioCtx = null;
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById('soundToggle').textContent = soundOn ? '🔊 SFX On' : '🔇 SFX Off';
+      if (soundOn) playTone(660, 0.08, 'sine');
+    }
+
+    function playTone(freq, dur, type = 'triangle') {
+      if (!soundOn) return;
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    }
+
+    /* Club Kit Theme Switcher */
+    function setKit(accent, dark, glow, el) {
+      document.documentElement.style.setProperty('--accent', accent);
+      document.documentElement.style.setProperty('--accent-dark', dark);
+      document.documentElement.style.setProperty('--accent-glow', glow);
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      playTone(520, 0.09);
+    }
+
+    /* Tactical Board & Dream XI */
+    const formations = {
+      '433': [
+        { pos: 'GK', x: 50, y: 90 },
+        { pos: 'LB', x: 16, y: 72 }, { pos: 'CB', x: 38, y: 75 }, { pos: 'CB', x: 62, y: 75 }, { pos: 'RB', x: 84, y: 72 },
+        { pos: 'CM', x: 30, y: 50 }, { pos: 'CDM', x: 50, y: 56 }, { pos: 'CM', x: 70, y: 50 },
+        { pos: 'LW', x: 18, y: 24 }, { pos: 'ST', x: 50, y: 18 }, { pos: 'RW', x: 82, y: 24 }
+      ],
+      '4231': [
+        { pos: 'GK', x: 50, y: 90 },
+        { pos: 'LB', x: 16, y: 72 }, { pos: 'CB', x: 38, y: 75 }, { pos: 'CB', x: 62, y: 75 }, { pos: 'RB', x: 84, y: 72 },
+        { pos: 'CDM', x: 36, y: 56 }, { pos: 'CDM', x: 64, y: 56 },
+        { pos: 'LAM', x: 20, y: 34 }, { pos: 'CAM', x: 50, y: 36 }, { pos: 'RAM', x: 80, y: 34 },
+        { pos: 'ST', x: 50, y: 16 }
+      ],
+      '352': [
+        { pos: 'GK', x: 50, y: 90 },
+        { pos: 'CB', x: 26, y: 74 }, { pos: 'CB', x: 50, y: 76 }, { pos: 'CB', x: 74, y: 74 },
+        { pos: 'LWB', x: 12, y: 48 }, { pos: 'CM', x: 34, y: 52 }, { pos: 'CDM', x: 50, y: 58 }, { pos: 'CM', x: 66, y: 52 }, { pos: 'RWB', x: 88, y: 48 },
+        { pos: 'ST', x: 37, y: 20 }, { pos: 'ST', x: 63, y: 20 }
+      ]
+    };
+
+    const presets = [
+      [
+        { name: 'Buffon', num: 1 }, { name: 'Maldini', num: 3 }, { name: 'Beckenbauer', num: 5 }, { name: 'Ramos', num: 4 }, { name: 'Cafu', num: 2 },
+        { name: 'Iniesta', num: 8 }, { name: 'Busquets', num: 16 }, { name: 'Zidane', num: 10 },
+        { name: 'Ronaldinho', num: 11 }, { name: 'Ronaldo R9', num: 9 }, { name: 'Messi', num: 19 }
+      ],
+      [
+        { name: 'Neuer', num: 1 }, { name: 'Marcelo', num: 12 }, { name: 'Van Dijk', num: 4 }, { name: 'Puyol', num: 5 }, { name: 'Lahm', num: 21 },
+        { name: 'Modrić', num: 10 }, { name: 'Kroos', num: 8 }, { name: 'De Bruyne', num: 17 },
+        { name: 'C. Ronaldo', num: 7 }, { name: 'Henry', num: 14 }, { name: 'Salah', num: 11 }
+      ]
+    ];
+
+    let currentFormation = '433';
+    let presetIdx = 0;
+    let squad = JSON.parse(JSON.stringify(presets[0]));
+    let selectedIdx = 0;
+
+    function renderPitch() {
+      const pitch = document.getElementById('pitch');
+      pitch.querySelectorAll('.player-node').forEach(n => n.remove());
+      const coords = formations[currentFormation];
+
+      squad.forEach((p, i) => {
+        const node = document.createElement('div');
+        node.className = 'player-node' + (i === selectedIdx ? ' selected' : '');
+        node.style.left = coords[i].x + '%';
+        node.style.top = coords[i].y + '%';
+        node.innerHTML = `<div class="jersey">${p.num}</div><div class="player-tag">${p.name}</div>`;
+        node.onclick = () => selectPlayer(i);
+        pitch.appendChild(node);
+      });
+
+      const list = document.getElementById('rosterList');
+      list.innerHTML = '';
+      squad.forEach((p, i) => {
+        const item = document.createElement('div');
+        item.className = 'roster-item' + (i === selectedIdx ? ' selected' : '');
+        item.innerHTML = `<span class="roster-num">#${p.num}</span><span>${p.name}</span><span style="margin-left:auto;color:var(--muted);font-size:0.72rem">${coords[i].pos}</span>`;
+        item.onclick = () => selectPlayer(i);
+        list.appendChild(item);
+      });
+
+      document.getElementById('editName').value = squad[selectedIdx].name;
+      document.getElementById('editNum').value = squad[selectedIdx].num;
+      document.getElementById('editPos').textContent = coords[selectedIdx].pos;
+    }
+
+    function selectPlayer(idx) {
+      selectedIdx = idx;
+      renderPitch();
+      playTone(440, 0.06);
+    }
+
+    function updateSelectedPlayer() {
+      const nameVal = document.getElementById('editName').value.trim();
+      const numVal = parseInt(document.getElementById('editNum').value, 10);
+      if (nameVal) squad[selectedIdx].name = nameVal;
+      if (!isNaN(numVal) && numVal >= 1 && numVal <= 99) squad[selectedIdx].num = numVal;
+      renderPitch();
+    }
+
+    function setFormation(key, btn) {
+      currentFormation = key;
+      document.querySelectorAll('#tactics .sec-head .pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      renderPitch();
+      playTone(580, 0.1);
+    }
+
+    function cyclePreset() {
+      presetIdx = (presetIdx + 1) % presets.length;
+      squad = JSON.parse(JSON.stringify(presets[presetIdx]));
+      renderPitch();
+      playTone(620, 0.12);
+    }
+
+    function copyLineup() {
+      const coords = formations[currentFormation];
+      const text = `PITCHPULSE (${currentFormation.split('').join('-')})\n` +
+        squad.map((p, i) => `${coords[i].pos}: #${p.num} ${p.name}`).join('\n');
+      navigator.clipboard?.writeText(text);
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => (btn.textContent = '📋 Copy Lineup'), 1800);
+    }
+
+    /* Penalty Shootout */
+    let round = 0;
+    let goals = 0;
+    let busy = false;
+
+    const zoneCoords = [
+      { left: '34%', bottom: '215px', keeperLeft: '22%' },
+      { left: '50%', bottom: '215px', keeperLeft: '50%' },
+      { left: '66%', bottom: '215px', keeperLeft: '78%' },
+      { left: '34%', bottom: '145px', keeperLeft: '22%' },
+      { left: '50%', bottom: '145px', keeperLeft: '50%' },
+      { left: '66%', bottom: '145px', keeperLeft: '78%' }
+    ];
+
+    function takePenalty(zone) {
+      if (busy || round >= 5) return;
+      busy = true;
+      playTone(190, 0.14, 'sawtooth');
+
+      const keeperChoice = Math.floor(Math.random() * 6);
+      const ball = document.getElementById('ball');
+      const keeper = document.getElementById('keeper');
+      const callout = document.getElementById('penCallout');
+
+      ball.style.left = zoneCoords[zone].left;
+      ball.style.bottom = zoneCoords[zone].bottom;
+      ball.style.transform = 'translateX(-50%) scale(0.75)';
+
+      keeper.style.left = zoneCoords[keeperChoice].keeperLeft;
+      keeper.style.transform = keeperChoice % 3 === 0 ? 'translateX(-50%) rotate(-35deg)' :
+                               keeperChoice % 3 === 2 ? 'translateX(-50%) rotate(35deg)' : 'translateX(-50%)';
+
+      const isSaved = zone === keeperChoice;
+      const dots = document.querySelectorAll('#penDots .dot');
+
+      setTimeout(() => {
+        if (isSaved) {
+          callout.textContent = 'WHAT A SAVE!';
+          callout.style.color = '#ef4444';
+          dots[round].classList.add('miss');
+          dots[round].textContent = '✕';
+          playTone(150, 0.25, 'square');
+        } else {
+          goals++;
+          callout.textContent = 'GOAL!';
+          callout.style.color = '#10b981';
+          dots[round].classList.add('goal');
+          dots[round].textContent = '⚽';
+          document.getElementById('penScore').textContent = goals;
+          playTone(740, 0.25, 'triangle');
+        }
+        round++;
+        document.getElementById('penStatus').textContent =
+          round === 5 ? `Shootout complete! Final score: ${goals}/5` : `Round ${round + 1} of 5`;
+      }, 420);
+
+      setTimeout(() => {
+        ball.style.left = '50%';
+        ball.style.bottom = '24px';
+        ball.style.transform = 'translateX(-50%) scale(1)';
+        keeper.style.left = '50%';
+        keeper.style.transform = 'translateX(-50%)';
+        callout.textContent = '';
+        busy = false;
+      }, 1350);
+    }
+
+    function resetShootout() {
+      round = 0;
+      goals = 0;
+      busy = false;
+      document.getElementById('penScore').textContent = '0';
+      document.getElementById('penStatus').textContent = 'Click any zone in the goal to shoot!';
+      document.getElementById('penCallout').textContent = '';
+      document.querySelectorAll('#penDots .dot').forEach((d, idx) => {
+        d.className = 'dot';
+        d.textContent = idx + 1;
+      });
+    }
+
+    /* Trivia Arena */
+    const questions = [
+      {
+        q: 'Which nation won the first-ever FIFA World Cup in 1930?',
+        opts: ['Brazil', 'Uruguay', 'Italy', 'Argentina'],
+        ans: 1,
+        exp: 'Hosts Uruguay defeated Argentina 4–2 in Montevideo to win the inaugural 1930 World Cup.'
+      },
+      {
+        q: 'What is the maximum number of players a team can have on the pitch during a match?',
+        opts: ['10', '11', '12', '9'],
+        ans: 1,
+        exp: 'Each team fields 11 players, one of whom must be the designated goalkeeper.'
+      },
+      {
+        q: 'Which player holds the record for the most Ballon d’Or awards?',
+        opts: ['Cristiano Ronaldo', 'Johan Cruyff', 'Lionel Messi', 'Michel Platini'],
+        ans: 2,
+        exp: 'Lionel Messi has won a record 8 Ballon d’Or trophies.'
+      },
+      {
+        q: 'How far is the penalty spot from the goal line?',
+        opts: ['10 yards (9.15m)', '12 yards (11m)', '15 yards (13.7m)', '18 yards (16.5m)'],
+        ans: 1,
+        exp: 'The penalty mark sits 12 yards (11 meters) directly in front of the center of the goal.'
+      },
+      {
+        q: 'Which manager popularized "Gegenpressing" at Borussia Dortmund and Liverpool?',
+        opts: ['Pep Guardiola', 'Jürgen Klopp', 'Carlo Ancelotti', 'José Mourinho'],
+        ans: 1,
+        exp: 'Jürgen Klopp made Gegenpressing—immediately pressing after losing possession—his signature tactic.'
+      }
+    ];
+
+    let qIdx = 0;
+    let qScore = 0;
+    let answered = false;
+
+    function loadQuestion() {
+      answered = false;
+      const item = questions[qIdx];
+      document.getElementById('qTitle').textContent = `Question ${qIdx + 1} of ${questions.length}`;
+      document.getElementById('qText').textContent = item.q;
+      document.getElementById('qFeedback').textContent = '';
+      document.getElementById('nextQBtn').style.display = 'none';
+
+      const wrap = document.getElementById('qOptions');
+      wrap.innerHTML = '';
+      item.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt';
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i, btn);
+        wrap.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(choice, btn) {
+      if (answered) return;
+      answered = true;
+      const item = questions[qIdx];
+      const buttons = document.querySelectorAll('.quiz-opt');
+
+      if (choice === item.ans) {
+        btn.classList.add('correct');
+        qScore++;
+        playTone(680, 0.16);
+      } else {
+        btn.classList.add('wrong');
+        buttons[item.ans].classList.add('correct');
+        playTone(180, 0.2, 'square');
+      }
+
+      document.getElementById('qFeedback').textContent = item.exp;
+      const nextBtn = document.getElementById('nextQBtn');
+      nextBtn.style.display = 'inline-flex';
+      nextBtn.textContent = qIdx === questions.length - 1 ? 'See Final Rank →' : 'Next Question →';
+    }
+
+    function nextQuestion() {
+      qIdx++;
+      if (qIdx < questions.length) {
+        loadQuestion();
+      } else {
+        const rank = qScore === 5 ? "Ballon d'Or Legend" : qScore >= 3 ? "First-Team Starter" : "Academy Prospect";
+        document.getElementById('qTitle').textContent = `Final Score: ${qScore} / 5`;
+        document.getElementById('qText').textContent = `Your Football IQ Rank: ${rank}`;
+        document.getElementById('qOptions').innerHTML = '';
+        document.getElementById('qFeedback').textContent = 'Want to improve your rank? Hit restart below.';
+        const nextBtn = document.getElementById('nextQBtn');
+        nextBtn.textContent = '↻ Play Quiz Again';
+        nextBtn.onclick = () => {
+          qIdx = 0;
+          qScore = 0;
+          nextBtn.onclick = nextQuestion;
+          loadQuestion();
+        };
+      }
+    }
+
+    /* Filterable Culture Cards */
+    function filterCards(cat, btn) {
+      document.querySelectorAll('#trivia .pill-group .pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('#cardsGrid .info-card').forEach(card => {
+        card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'block' : 'none';
+      });
+    }
+
+    renderPitch();
+    loadQuestion();
+  </script>
+</body>
+</html>
